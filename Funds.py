@@ -4,13 +4,13 @@ import matplotlib.pyplot as plt
 
 # Load datasets
 def load_data():
-    loans = pd.read_csv('Loans_Kenya.csv')
-    projects = pd.read_csv('Investment_Projects_Kenya.csv')
-    credits = pd.read_csv('Credits_Kenya.csv')
+    loans = pd.read_csv('FundsData\Loans_Kenya.csv')
+    projects = pd.read_csv('FundsData\Investment_Projects_Kenya.csv')
+    credits = pd.read_csv('FundsData\Credits_Kenya.csv')
     return loans, projects, credits
 
 # App title
-st.title("Kenya Finance Analytics Dashboard")
+st.title("Kenyan Finance Analytics Dashboard")
 st.markdown("Analyze loans, investment projects, and credits across different locations.")
 
 # Load data
