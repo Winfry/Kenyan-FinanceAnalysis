@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Load datasets
-@st.cache_data
 def load_data():
     loans = pd.read_csv('Loans_Kenya.csv')
     projects = pd.read_csv('Investment_Projects_Kenya.csv')
