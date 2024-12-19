@@ -1,101 +1,104 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import altair as alt
 
-# Load datasets
-def load_data():
-    loans = pd.read_csv('FundsData\Loans_Kenya.csv')
-    projects = pd.read_csv('FundsData\Investment_Projects_Kenya.csv')
-    credits = pd.read_csv('FundsData\Credits_Kenya.csv')
-    return loans, projects, credits
+# Load the datasets
+credits_df = pd.read_csv('Credits_Kenya.csv')
+investments_df = pd.read_csv('Investment_Projects_Kenya.csv')
+loans_df = pd.read_csv('Loans_Kenya.csv')
 
-# App title
-st.title("Kenyan Finance Analytics Dashboard")
-st.markdown("Analyze loans, Investment projects, and credits across different locations.")
+# Streamlit App
+st.title("Kenya Financial Insights")
+st.sidebar.title("🔍 Filters")
 
-# Load data
-df_loans, df_investments , df_credits = load_data()
+# Sidebar filters
+view_option = st.sidebar.radio("Choose a view:", ["All Data", "Credits", "Investments", "Loans", "Insights Panel"])
 
-# Filter by Location
-st.sidebar.header("🔍 Filters")
-# Check if 'Location' column exists and handle missing values
-locations = set()
-if 'Location' in df_loans.columns:
-    locations.update(df_loans['Location'].dropna().unique())
+# All Data View
+if view_option == "All Data":
+    st.header("All Datasets Overview")
+    st.subheader("Credits Dataset")
+    st.dataframe(credits_df)
 
-if 'Location' in df_investments.columns:
-    locations.update(df_investments['Location'].dropna().unique())
+    st.subheader("Investments Dataset")
+    st.dataframe(investments_df)
 
-if 'Location' in df_credits.columns:
-    locations.update(df_credits['Location'].dropna().unique())
+    st.subheader("Loans Dataset")
+    st.dataframe(loans_df)
 
-# Convert to a sorted list before passing to the selectbox
-selected_location = st.sidebar.selectbox("Select a Location:", sorted(locations))
+# Credits View
+if view_option == "Credits":
+    st.header("Credits Dataset")
+    st.dataframe(credits_df)
+    
+    # Filter by year and facility type
+    year = st.sidebar.selectbox("Select Year", sorted(credits_df['Year'].dropna().unique()))
+    facility_type = st.sidebar.selectbox("Select Facility Type", credits_df['Credit Facility Type'].dropna().unique())
+    
+    filtered_credits = credits_df[(credits_df['Year'] == year) & (credits_df['Credit Facility Type'] == facility_type)]
+    st.subheader(f"Credits Data for {facility_type} in {year}")
+    st.dataframe(filtered_credits)
 
-# Convert to a sorted list before passing to the selectbox
-selected_location = st.sidebar.selectbox("Select a Location:", sorted(locations))
+# Investments View
+if view_option == "Investments":
+    st.header("Investments Dataset")
+    st.dataframe(investments_df)
+    
+    # Filter by sector or county
+    sector = st.sidebar.selectbox("Select Sector", investments_df['Sector'].dropna().unique())
+    county = st.sidebar.selectbox("Select County", investments_df['County'].dropna().unique())
+    
+    filtered_investments = investments_df[(investments_df['Sector'] == sector) & (investments_df['County'] == county)]
+    st.subheader(f"Investment Projects in {sector} Sector, {county}")
+    st.dataframe(filtered_investments)
 
-# Filter datasets based on location
-filtered_loans = loans_df[loans_df['Location'] == selected_location]
-filtered_projects = projects_df[projects_df['Location'] == selected_location]
-filtered_credits = credits_df[credits_df['Location'] == selected_location]
+# Loans View
+if view_option == "Loans":
+    st.header("Loans Dataset")
+    st.dataframe(loans_df)
+    
+    # Filter by year
+    loan_year = st.sidebar.selectbox("Select Year", sorted(loans_df['Year'].dropna().unique()))
+    
+    filtered_loans = loans_df[loans_df['Year'] == loan_year]
+    st.subheader(f"Loans Data for {loan_year}")
+    st.dataframe(filtered_loans)
 
-# Display Loans Dataset
-st.header("Loans Data")
-st.dataframe(filtered_loans)
-st.write(f"Total Loans in {selected_location}: {len(filtered_loans)}")
+# Insights Panel
+if view_option == "Insights Panel":
+    st.header("Insights Panel")
 
-# Visualization: Loan Amounts
-if not filtered_loans.empty:
-    st.subheader("Loan Amount Distribution")
-    fig, ax = plt.subplots()
-    filtered_loans['Amount'].plot(kind='hist', bins=20, ax=ax, color='skyblue', edgecolor='black')
-    ax.set_title("Loan Amount Distribution")
-    ax.set_xlabel("Amount")
-    ax.set_ylabel("Frequency")
-    st.pyplot(fig)
+    # Total statistics
+    total_credits = credits_df['Amount'].sum()
+    total_investments = investments_df['Investment Amount'].sum()
+    total_loans = loans_df['Loan Amount'].sum()
+    
+    st.subheader("Overall Financial Totals")
+    st.write(f"**Total Credits:** KES {total_credits:,.2f}")
+    st.write(f"**Total Investments:** KES {total_investments:,.2f}")
+    st.write(f"**Total Loans:** KES {total_loans:,.2f}")
 
-# Display Investment Projects Dataset
-st.header("Investment Projects Data")
-st.dataframe(filtered_projects)
-st.write(f"Total Projects in {selected_location}: {len(filtered_projects)}")
+    # Comparative Trends
+    st.subheader("Yearly Trends")
+    credits_yearly = credits_df.groupby('Year')['Amount'].sum().reset_index()
+    investments_yearly = investments_df.groupby('Start Year')['Investment Amount'].sum().reset_index()
+    loans_yearly = loans_df.groupby('Year')['Loan Amount'].sum().reset_index()
 
-# Visualization: Budget by Sector
-if not filtered_projects.empty:
-    st.subheader("Project Budget by Sector")
-    sector_budget = filtered_projects.groupby('Sector')['Budget'].sum()
-    fig, ax = plt.subplots()
-    sector_budget.plot(kind='bar', ax=ax, color='orange', edgecolor='black')
-    ax.set_title("Total Budget by Sector")
-    ax.set_xlabel("Sector")
-    ax.set_ylabel("Total Budget")
-    st.pyplot(fig)
+    credits_chart = alt.Chart(credits_yearly).mark_line().encode(
+        x='Year:O', y='Amount:Q', tooltip=['Year', 'Amount']
+    ).properties(title="Credits Over Years")
 
-# Display Credits Dataset
-st.header("Credits Data")
-st.dataframe(filtered_credits)
-st.write(f"Total Credits in {selected_location}: {len(filtered_credits)}")
+    investments_chart = alt.Chart(investments_yearly).mark_line().encode(
+        x='Start Year:O', y='Investment Amount:Q', tooltip=['Start Year', 'Investment Amount']
+    ).properties(title="Investments Over Years")
 
-# Visualization: Credit Approval Status
-if not filtered_credits.empty:
-    st.subheader("Credit Approval Status")
-    approval_status = filtered_credits['Approval_Status'].value_counts()
-    fig, ax = plt.subplots()
-    approval_status.plot(kind='pie', ax=ax, autopct='%1.1f%%', colors=['lightgreen', 'salmon'], startangle=90)
-    ax.set_ylabel("")
-    ax.set_title("Credit Approval Status")
-    st.pyplot(fig)
+    loans_chart = alt.Chart(loans_yearly).mark_line().encode(
+        x='Year:O', y='Loan Amount:Q', tooltip=['Year', 'Loan Amount']
+    ).properties(title="Loans Over Years")
 
-# Download Filtered Data
-st.sidebar.header("Download Filtered Data")
-if st.sidebar.button("Download Loans Data"):
-    filtered_loans.to_csv("Filtered_Loans.csv", index=False)
-    st.sidebar.success("Loans data downloaded!")
+    st.altair_chart(credits_chart, use_container_width=True)
+    st.altair_chart(investments_chart, use_container_width=True)
+    st.altair_chart(loans_chart, use_container_width=True)
 
-if st.sidebar.button("Download Projects Data"):
-    filtered_projects.to_csv("Filtered_Projects.csv", index=False)
-    st.sidebar.success("Projects data downloaded!")
 
-if st.sidebar.button("Download Credits Data"):
-    filtered_credits.to_csv("Filtered_Credits.csv", index=False)
-    st.sidebar.success("Credits data downloaded!")
