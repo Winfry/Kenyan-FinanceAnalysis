@@ -11,14 +11,28 @@ def load_data():
 
 # App title
 st.title("Kenyan Finance Analytics Dashboard")
-st.markdown("Analyze loans, investment projects, and credits across different locations.")
+st.markdown("Analyze loans, Investment projects, and credits across different locations.")
 
 # Load data
-loans_df, projects_df, credits_df = load_data()
+df_loans, df_investments , df_credits = load_data()
 
 # Filter by Location
-st.sidebar.header("Filters")
-locations = set(loans_df['Location']).union(set(projects_df['Location'])).union(set(credits_df['Location']))
+st.sidebar.header("🔍 Filters")
+# Check if 'Location' column exists and handle missing values
+locations = set()
+if 'Location' in df_loans.columns:
+    locations.update(df_loans['Location'].dropna().unique())
+
+if 'Location' in df_investments.columns:
+    locations.update(df_investments['Location'].dropna().unique())
+
+if 'Location' in df_credits.columns:
+    locations.update(df_credits['Location'].dropna().unique())
+
+# Convert to a sorted list before passing to the selectbox
+selected_location = st.sidebar.selectbox("Select a Location:", sorted(locations))
+
+# Convert to a sorted list before passing to the selectbox
 selected_location = st.sidebar.selectbox("Select a Location:", sorted(locations))
 
 # Filter datasets based on location
