@@ -10,7 +10,7 @@ loans_df = pd.read_csv('Loans_Kenya.csv')
 
 # Streamlit App
 st.title("Kenya Financial Insights")
-st.sidebar.title("🔍 Filters")
+st.sidebar.header("🔍 Filters")
 
 # Sidebar filters
 view_option = st.sidebar.radio("Choose a view:", ["All Data", "Credits", "Investments", "Loans", "Insights Panel"])
