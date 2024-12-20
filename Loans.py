@@ -6,7 +6,9 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 
 # Load your dataset
-df = pd.read_csv("Loans_Kenya.csv")
+df = pd.read_csv("FundsData/Loans_Kenya.csv")
+# Check the columns in the dataset
+print(df.columns)
 
 # Display a description of the dataset
 st.title("Loan Prediction and Recommendation System")
