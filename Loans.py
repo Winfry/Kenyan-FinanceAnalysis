@@ -9,6 +9,12 @@ from sklearn.preprocessing import StandardScaler
 df = pd.read_csv("FundsData/Loans_Kenya.csv")
 # Check the columns in the dataset
 print(df.columns)
+# Remove any leading/trailing spaces from column names
+df.columns = df.columns.str.strip()
+
+# Now check the columns again
+print(df.columns)
+
 
 # Display a description of the dataset
 st.title("Loan Prediction and Recommendation System")
