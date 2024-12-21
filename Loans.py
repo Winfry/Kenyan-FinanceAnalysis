@@ -40,22 +40,23 @@ if uploaded_file is not None:
     years = st.number_input("Enter loan term in years", min_value=1, step=1)
 
     # Enhanced prediction logic
-    if st.button("Predict Total Repayment"):
-        # Simple interest formula
-        total_interest = (principal_amount * interest_rate * years) / 100
-        total_repayment = principal_amount + total_interest
-        # Breakdown display
-        st.subheader("Prediction Results")
-        st.write(f"### Principal Amount: ${principal_amount:,.2f}")
-        st.write(f"### Total Interest: ${total_interest:,.2f}")
-        st.write(f"### Total Repayment Amount: ${total_repayment:,.2f}")
+    if principal_amount > 0 and interest_rate > 0 and years > 0:
+         if st.button("Predict Total Repayment"):
+            # Simple interest formula
+            total_interest = (principal_amount * interest_rate * years) / 100
+            total_repayment = principal_amount + total_interest
+            # Breakdown display
+            st.subheader("Prediction Results")
+            st.write(f"### Principal Amount: ${principal_amount:,.2f}")
+            st.write(f"### Total Interest: ${total_interest:,.2f}")
+            st.write(f"### Total Repayment Amount: ${total_repayment:,.2f}")
 
-        # Visualization of repayment breakdown
-        repayment_fig = px.pie(
-            names=["Principal", "Interest"],
-            values=[principal_amount, total_interest],
-            title="Repayment Breakdown",
-            color_discrete_sequence=px.colors.sequential.RdBu
+            # Visualization of repayment breakdown
+            repayment_fig = px.pie(
+                names=["Principal", "Interest"],
+                values=[principal_amount, total_interest],
+                title="Repayment Breakdown",
+                color_discrete_sequence=px.colors.sequential.RdBu
     )
     st.plotly_chart(repayment_fig)    
 
