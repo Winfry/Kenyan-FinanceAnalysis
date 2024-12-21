@@ -171,7 +171,7 @@ if credits_file or investments_file or loans_file:
             else:
                 st.error(f"The Loans dataset is missing required columns: {', '.join(missing_columns)}")
 
-        else:
+        else: 
             st.warning(f"Please upload the {dataset_option} dataset to interact with it.")
 
     except Exception as e:
