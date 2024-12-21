@@ -184,3 +184,12 @@ if credits_file or investments_file or loans_file:
 
     except Exception as e:
         st.error(f"An error occurred while processing the files: {e}")
+
+
+
+
+ # Prediction logic: Simple loan repayment calculation
+    if st.button("Predict Total Repayment"):
+        total_interest = (principal_amount * interest_rate * years) / 100
+        total_repayment = principal_amount * (1 + (interest_rate / 100) * years)
+        st.write(f"The total repayment amount is: ${total_repayment:,.2f}")
