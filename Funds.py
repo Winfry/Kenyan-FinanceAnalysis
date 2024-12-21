@@ -17,6 +17,10 @@ credits_file = st.sidebar.file_uploader("Upload Credits Dataset", type="csv")
 investments_file = st.sidebar.file_uploader("Upload Investments Dataset", type="csv")
 loans_file = st.sidebar.file_uploader("Upload Loans Dataset", type="csv")
 
+def check_columns(df, required_columns):
+    missing = [col for col in required_columns if col not in df.columns]
+    return missing
+
 if credits_file or investments_file or loans_file:
     try:
         credits_df = pd.read_csv(credits_file) if credits_file else None
@@ -30,7 +34,10 @@ if credits_file or investments_file or loans_file:
             st.header("Credits Dataset")
             st.dataframe(credits_df)
 
-            if 'Year' in credits_df.columns and 'Credit Facility Type' in credits_df.columns:
+            required_columns = ['Year', 'Credit Facility Type']
+            missing_columns = check_columns(credits_df, required_columns)
+
+            if not missing_columns:
                 year = st.sidebar.selectbox("Select Year", sorted(credits_df['Year'].dropna().unique()))
                 facility_type = st.sidebar.selectbox("Select Facility Type", credits_df['Credit Facility Type'].dropna().unique())
 
@@ -68,13 +75,16 @@ if credits_file or investments_file or loans_file:
                 else:
                     st.error("The Credits dataset is missing required columns 'Credit Amount', 'Interest Rate', or 'Duration'.")
             else:
-                st.error("The Credits dataset is missing required columns 'Year' or 'Credit Facility Type'.")
+                st.error(f"The Credits dataset is missing required columns: {', '.join(missing_columns)}")
 
         elif dataset_option == "Investments" and investments_df is not None:
             st.header("Investments Dataset")
             st.dataframe(investments_df)
 
-            if 'Sector' in investments_df.columns and 'County' in investments_df.columns:
+            required_columns = ['Sector', 'County']
+            missing_columns = check_columns(investments_df, required_columns)
+
+            if not missing_columns:
                 sector = st.sidebar.selectbox("Select Sector", investments_df['Sector'].dropna().unique())
                 county = st.sidebar.selectbox("Select County", investments_df['County'].dropna().unique())
 
@@ -111,15 +121,17 @@ if credits_file or investments_file or loans_file:
                     st.write(f"Model Mean Squared Error: {mse:.2f}")
                 else:
                     st.error("The Investments dataset is missing required columns 'Investment Amount', 'Return Rate', or 'Duration'.")
-
             else:
-                st.error("The Investments dataset is missing required columns 'Sector' or 'County'.")
+                st.error(f"The Investments dataset is missing required columns: {', '.join(missing_columns)}")
 
         elif dataset_option == "Loans" and loans_df is not None:
             st.header("Loans Dataset")
             st.dataframe(loans_df)
 
-            if 'Year' in loans_df.columns:
+            required_columns = ['Year']
+            missing_columns = check_columns(loans_df, required_columns)
+
+            if not missing_columns:
                 loan_year = st.sidebar.selectbox("Select Year", sorted(loans_df['Year'].dropna().unique()))
 
                 filtered_loans = loans_df[loans_df['Year'] == loan_year]
@@ -157,12 +169,10 @@ if credits_file or investments_file or loans_file:
                     st.error("The Loans dataset is missing required columns 'Loan Amount', 'Interest Rate', or 'Duration'.")
 
             else:
-                st.error("The Loans dataset is missing the required column 'Year'.")
+                st.error(f"The Loans dataset is missing required columns: {', '.join(missing_columns)}")
 
         else:
             st.warning(f"Please upload the {dataset_option} dataset to interact with it.")
 
     except Exception as e:
         st.error(f"An error occurred while processing the files: {e}")
-else:
-    st.warning("Please upload at least one dataset to proceed.")
