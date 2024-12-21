@@ -14,6 +14,17 @@ df.columns = df.columns.str.strip()
 
 # Now check the columns again
 print(df.columns)
+import pandas as pd
+
+# Load the Loans dataset
+loans_df = pd.read_csv("FundsData/Loans_Kenya.csv")
+
+# Check if 'Year' column exists, add it if missing
+if 'Year' not in loans_df.columns:
+    loans_df['Year'] = 2020  # Default value (or customize as needed)
+
+# Save the updated dataset
+loans_df.to_csv("FundsData/Updated_Loans_Kenya.csv", index=False)
 
 
 # Display a description of the dataset
@@ -36,7 +47,7 @@ income = st.number_input("Enter annual income", min_value=0)
 loan_type = st.selectbox("Select loan type", df['Loan Type'].unique())
 
 # Preprocess the data
-X = df[['loan_amount', 'income', 'loan_type']]  # Modify based on your dataset columns
+X = df[['LoanAmount', 'Income', 'LoanType']]  # Modify based on your dataset columns
 y = df['loan_status']  # 0 for rejected, 1 for approved
 
 # Convert categorical to numeric
