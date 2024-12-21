@@ -193,3 +193,11 @@ if credits_file or investments_file or loans_file:
         total_interest = (principal_amount * interest_rate * years) / 100
         total_repayment = principal_amount * (1 + (interest_rate / 100) * years)
         st.write(f"The total repayment amount is: ${total_repayment:,.2f}")
+        
+        
+# Visualization of repayment breakdown
+        repayment_fig = px.pie(
+            names=["Principal", "Interest"],
+            values=[principal_amount, total_interest],
+            title="Repayment Breakdown",
+            color_discrete_sequence=px.colors.sequential.RdBu        
