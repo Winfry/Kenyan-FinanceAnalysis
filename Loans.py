@@ -57,8 +57,8 @@ if uploaded_file is not None:
                 values=[principal_amount, total_interest],
                 title="Repayment Breakdown",
                 color_discrete_sequence=px.colors.sequential.RdBu
-    )
-    st.plotly_chart(repayment_fig)    
+            )
+            st.plotly_chart(repayment_fig)    
 
     # Section 2: Loan Recommendation
     st.header("Loan Type Recommendation")
@@ -82,6 +82,16 @@ if uploaded_file is not None:
 
     # Section 3: Interactive Data Visualization
     st.header("Loan Data Insights")
+    
+    # Filters for interactivity
+    borrower = st.selectbox("Select Borrower", options=loans_df['Borrower'].unique())
+    loan_type = st.selectbox("Select Loan Type", options=loans_df['Loan Type'].unique())
+    guarantor = st.selectbox("Select Guarantor", options=loans_df['Guarantor'].unique())
+
+    # Filter the dataframe based on user selections
+    filtered_df = loans_df[(loans_df['Borrower'] == borrower) & 
+                       (loans_df['Loan Type'] == loan_type) & 
+                       (loans_df['Guarantor'] == guarantor)]
 
     # Display loan distribution
     st.subheader("Loan Amount Distribution")
