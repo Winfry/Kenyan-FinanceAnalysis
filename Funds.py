@@ -17,6 +17,7 @@ credits_file = st.sidebar.file_uploader("Upload Credits Dataset", type="csv")
 investments_file = st.sidebar.file_uploader("Upload Investments Dataset", type="csv")
 loans_file = st.sidebar.file_uploader("Upload Loans Dataset", type="csv")
 
+
 def check_columns(df, required_columns):
     missing = [col for col in required_columns if col not in df.columns]
     return missing
@@ -130,6 +131,13 @@ if credits_file or investments_file or loans_file:
 
             required_columns = ['Year']
             missing_columns = check_columns(loans_df, required_columns)
+            # Check if 'Year' column exists, add it if missing
+            if 'Year' not in loans_df.columns:
+                loans_df['Year'] = 2020  # Default value (or customize as needed)
+
+            # Save the updated dataset
+            loans_df.to_csv("FundsData/Updated_Loans_Kenya.csv", index=False)
+
 
             if not missing_columns:
                 loan_year = st.sidebar.selectbox("Select Year", sorted(loans_df['Year'].dropna().unique()))
