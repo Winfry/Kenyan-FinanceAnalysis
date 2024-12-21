@@ -71,6 +71,8 @@ if uploaded_file is not None:
     st.subheader("Loan Amount Distribution")
     if 'Original Principal Amount (US$)' in loans_df.columns:
         st.bar_chart(loans_df['Original Principal Amount (US$)'])
+        fig = px.histogram(loans_df, x='Original Principal Amount (US$)', title="Loan Amount Distribution", nbins=20)
+        st.plotly_chart(fig)
     else:
         st.warning("'Original Principal Amount (US$)' column not found for distribution visualization.")
 
