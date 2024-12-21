@@ -95,13 +95,28 @@ if uploaded_file is not None:
         
      # Correlation heatmap
     st.subheader("Correlation Heatmap")
-    if loans_df.select_dtypes(include=[np.number]).shape[1] > 1:
-        corr = loans_df.corr()
-        fig = px.imshow(corr, text_auto=True, title="Correlation Heatmap")
+    numerical_data = loans_df.select_dtypes(include=[np.number])
+
+    if numerical_data.shape[1] > 1:
+        corr = numerical_data.corr()
+        fig = px.imshow(
+            corr,
+            text_auto=True,
+            title="Correlation Heatmap",
+            color_continuous_scale="Viridis"
+        )
+        for i in range(len(corr.columns)):
+            for j in range(len(corr.columns)):
+                fig.add_annotation(
+                    text=f"{corr.iloc[i, j]:.2f}",
+                    x=j,
+                    y=i,
+                    showarrow=False,
+                    font=dict(color="white" if abs(corr.iloc[i, j]) > 0.5 else "black")
+                )
         st.plotly_chart(fig)
     else:
         st.warning("Not enough numerical columns for correlation heatmap.")   
-        
         
 else:
     st.warning("Please upload the dataset to proceed.")
