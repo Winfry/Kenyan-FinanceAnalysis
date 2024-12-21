@@ -76,11 +76,21 @@ if uploaded_file is not None:
     else:
         st.warning("'Original Principal Amount (US$)' column not found for distribution visualization.")
 
-    # Display project name insights
+    # Display project name insights with Plotly
     st.subheader("Project Names and Signing Dates")
     if 'Project Name' in loans_df.columns and 'Agreement Signing Date' in loans_df.columns:
-        st.write(loans_df[['Project Name', 'Agreement Signing Date']])
+        fig = px.scatter(loans_df, x='Agreement Signing Date', y='Original Principal Amount (US$)',
+                         color='Project Name', title="Project Signing Dates and Loan Amounts")
+        st.plotly_chart(fig)
     else:
         st.warning("Required columns 'Project Name' or 'Agreement Signing Date' not found.")
+
+    # Additional Visualizations
+    st.subheader("Loan Amount Over Time")
+    if 'Year' in loans_df.columns and 'Original Principal Amount (US$)' in loans_df.columns:
+        fig = px.line(loans_df, x='Year', y='Original Principal Amount (US$)', title="Loan Amount Over Years")
+        st.plotly_chart(fig)
+    else:
+        st.warning("Columns 'Year' or 'Original Principal Amount (US$)' not found for time series visualization.")
 else:
     st.warning("Please upload the dataset to proceed.")
