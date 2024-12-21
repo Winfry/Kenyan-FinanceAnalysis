@@ -95,17 +95,17 @@ if uploaded_file is not None:
 
     # Display loan distribution
     st.subheader("Loan Amount Distribution")
-    if 'Original Principal Amount (US$)' in loans_df.columns:
-        st.bar_chart(loans_df['Original Principal Amount (US$)'])
-        fig = px.histogram(loans_df, x='Original Principal Amount (US$)', title="Loan Amount Distribution", nbins=20)
+    if 'Original Principal Amount (US$)' in filtered_df.columns:
+        st.bar_chart(filtered_df['Original Principal Amount (US$)'])
+        fig = px.histogram(filtered_df, x='Original Principal Amount (US$)', title="Loan Amount Distribution", nbins=20)
         st.plotly_chart(fig)
     else:
         st.warning("'Original Principal Amount (US$)' column not found for distribution visualization.")
 
     # Display project name insights with Plotly
     st.subheader("Project Names and Signing Dates")
-    if 'Project Name' in loans_df.columns and 'Agreement Signing Date' in loans_df.columns:
-        fig = px.scatter(loans_df, x='Agreement Signing Date', y='Original Principal Amount (US$)',
+    if 'Project Name' in filtered_df.columns and 'Agreement Signing Date' in filtered_df.columns:
+        fig = px.scatter(filtered_df, x='Agreement Signing Date', y='Original Principal Amount (US$)',
                          color='Project Name', title="Project Signing Dates and Loan Amounts")
         st.plotly_chart(fig)
     else:
