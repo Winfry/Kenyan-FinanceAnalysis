@@ -92,5 +92,16 @@ if uploaded_file is not None:
         st.plotly_chart(fig)
     else:
         st.warning("Columns 'Year' or 'Original Principal Amount (US$)' not found for time series visualization.")
+        
+     # Correlation heatmap
+    st.subheader("Correlation Heatmap")
+    if loans_df.select_dtypes(include=[np.number]).shape[1] > 1:
+        corr = loans_df.corr()
+        fig = px.imshow(corr, text_auto=True, title="Correlation Heatmap")
+        st.plotly_chart(fig)
+    else:
+        st.warning("Not enough numerical columns for correlation heatmap.")   
+        
+        
 else:
     st.warning("Please upload the dataset to proceed.")
