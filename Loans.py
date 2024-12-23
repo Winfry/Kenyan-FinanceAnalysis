@@ -110,6 +110,14 @@ if uploaded_file is not None:
         st.plotly_chart(fig)
     else:
         st.warning("Required columns 'Project Name' or 'Agreement Signing Date' not found.")
+        
+    start_date = st.date_input("Select start date", loans_df['Agreement Signing Date'].min())
+    end_date = st.date_input("Select end date", loans_df['Agreement Signing Date'].max())
+
+    # Filter data based on date range
+    filtered_df = filtered_df[(filtered_df['Agreement Signing Date'] >= start_date) & 
+                           (filtered_df['Agreement Signing Date'] <= end_date)]
+    
 
     # Additional Visualizations
     st.subheader("Loan Amount Over Time")
