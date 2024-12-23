@@ -117,6 +117,10 @@ if uploaded_file is not None:
     # Filter data based on date range
     filtered_df = filtered_df[(filtered_df['Agreement Signing Date'] >= start_date) & 
                            (filtered_df['Agreement Signing Date'] <= end_date)]
+    fig = px.histogram(filtered_df, x='Original Principal Amount (US$)', title="Loan Amount Distribution", nbins=20,
+                   hover_data=['Borrower', 'Loan Type', 'Guarantor'])
+    st.plotly_chart(fig)
+
     
 
     # Additional Visualizations
