@@ -104,6 +104,24 @@ if uploaded_file is not None:
 
     # Display project name insights with Plotly
     st.subheader("Project Names and Signing Dates")
+    # Ensure Agreement Signing Date is in datetime format
+    loans_df['Agreement Signing Date'] = pd.to_datetime(loans_df['Agreement Signing Date'], errors='coerce')
+    loans_df = loans_df.dropna(subset=['Agreement Signing Date'])  # Drop rows with invalid dates
+
+    # Extract min and max dates for date picker
+    min_date = loans_df['Agreement Signing Date'].min().date()
+    max_date = loans_df['Agreement Signing Date'].max().date()
+    # User inputs for date range
+    start_date = st.date_input("Select start date", min_date)
+    end_date = st.date_input("Select end date", max_date)
+    # Filter data based on date range
+    filtered_df = loans_df[(loans_df['Agreement Signing Date'] >= pd.Timestamp(start_date)) & 
+                       (loans_df['Agreement Signing Date'] <= pd.Timestamp(end_date))]
+    # Interactive histogram
+    fig = px.histogram(filtered_df, x='Original Principal Amount (US$)', title="Loan Amount Distribution", nbins=20,
+                   hover_data=['Borrower', 'Loan Type', 'Guarantor'])
+    st.plotly_chart(fig)
+
     if 'Project Name' in filtered_df.columns and 'Agreement Signing Date' in filtered_df.columns:
         fig = px.scatter(filtered_df, x='Agreement Signing Date', y='Original Principal Amount (US$)',
                          color='Project Name', title="Project Signing Dates and Loan Amounts")
